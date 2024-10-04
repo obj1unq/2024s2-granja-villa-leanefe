@@ -1,6 +1,7 @@
 import wollok.game.*
 import hector.*
 import cultivos.*
+import movimiento.*
 
 program farmville {
 	//  CONFIG	
@@ -10,9 +11,15 @@ program farmville {
 	game.ground("ground.png")
 
 	//  VISUALES
- 	game.addVisualCharacter(hector)
- 	game.addVisual(new Maiz()) // Se agrega a modo de prueba
+ 	game.addVisual(hector)
  	
+	// CONTROLES
+	keyboard.up().onPressDo({hector.mover(arriba)})
+	keyboard.down().onPressDo({hector.mover(abajo)})
+	keyboard.right().onPressDo({hector.mover(derecha)})
+	keyboard.left().onPressDo({hector.mover(izquierda)})
+	keyboard.m().onPressDo({hector.sembrar(new Maiz(position = hector.position()))})
+
  	//  COMIENZA
 	game.start()
 }

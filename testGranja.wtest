@@ -1,0 +1,112 @@
+import wollok.game.*
+import hector.*
+import cultivos.*
+import granja.*
+import movimiento.*
+
+describe "Movimiento" {
+
+    method initialize() {
+        game.clear()
+        game.width(3)
+        game.height(3)
+        hector.position(game.at(1,1))
+    }
+
+    test "Mueve hasta el límite superior" {
+        hector.mover(arriba)
+        assert.throwsException({hector.mover(arriba)})
+    }
+
+    test "Mueve hasta el límite inferior" {
+        hector.mover(abajo)
+        assert.throwsException({hector.mover(abajo)})
+    }
+
+    test "Mueve hasta el límite derecho" {
+        hector.mover(derecha)
+        assert.throwsException({hector.mover(derecha)})
+    }
+
+    test "Mueve hasta el límite izquierdo" {
+        hector.mover(izquierda)
+        assert.throwsException({hector.mover(izquierda)})
+    }
+
+}
+
+describe "Sembrar" {
+
+    method initialize() {
+        game.clear()
+        game.width(3)
+        game.height(3)
+        hector.position(game.at(0,1))
+    }
+
+    test "Siembro cultivos" {
+        const maiz = new Maiz(position = hector.position())
+        hector.sembrar(maiz)
+        hector.mover(derecha)
+        const trigo = new Trigo(position = hector.position())
+        hector.sembrar(trigo)
+        hector.mover(derecha)
+        const tomaco = new Tomaco(position = hector.position())
+        hector.sembrar(tomaco)
+        assert.equals(#{maiz, trigo, tomaco}, granja.cultivos())
+    }
+
+    test "No puedo sembrar más de uno en el mismo lugar" {
+        const maiz = new Maiz(position = hector.position())
+        const trigo = new Trigo(position = hector.position())
+        hector.sembrar(maiz)
+        assert.throwsException({hector.sembrar(trigo)})
+    }
+
+}
+
+describe "Regar" {
+    
+    method initialize() {
+        game.clear()
+        game.width(3)
+        game.height(2)
+        hector.position(game.at(0,0))
+    }
+
+    test "No hay nada para regar" {
+        assert.throwsException({hector.regar()})
+    }
+
+    test "Riega maiz y crece" {
+        const maiz = new Maiz(position=game.at(0,0))
+        granja.sembrar(maiz)
+        assert.equals(bebe, maiz.estado())
+        hector.regar()
+        assert.equals(adulto, maiz.estado())
+    }
+
+    test "Riega trigo hasta que vuelve a estado 0" {
+        const trigo = new Trigo(position=game.at(0,0))
+        granja.sembrar(trigo)
+        assert.equals(0, trigo.estado())
+        hector.regar()
+        assert.equals(1, trigo.estado())
+        hector.regar()
+        assert.equals(2, trigo.estado())
+        hector.regar()
+        assert.equals(3, trigo.estado())
+        hector.regar()
+        assert.equals(0, trigo.estado())
+    }
+
+    test "Riega tomaco, sube y luego ya no puede subir mas al volver a regar" {
+        const tomaco = new Tomaco(position=game.at(0,0))
+        granja.sembrar(tomaco)
+        hector.regar()
+        assert.notThat(granja.hayCultivoEn(game.at(0,0)))
+        assert.equals(tomaco, granja.cultivoEn(game.at(0,1)))
+        hector.mover(arriba)
+        assert.throwsException({hector.regar()})
+    }
+}

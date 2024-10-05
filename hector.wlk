@@ -3,9 +3,9 @@ import movimiento.*
 import granja.*
 
 object hector {
-	var property position = game.center()
+	var property position = game.at(1,1)
 	const property image = "player.png"
-	const cosechas = []
+	const cosechas = #{}
 	var oro = 0
 
 	method oro() {
@@ -19,9 +19,10 @@ object hector {
 	}
 
 	method sembrar(semilla) {
-		granja.validarSembrado(position)
-		game.addVisual(semilla)
+		granja.sembrar(semilla)
 	}
 
-	method esPlanta() { return false }
+	method regar() {
+		granja.regar(self.position())
+	}
 }

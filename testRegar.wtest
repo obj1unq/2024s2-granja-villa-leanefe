@@ -1,0 +1,51 @@
+import wollok.game.*
+import hector.*
+import cultivos.*
+import granja.*
+import movimiento.*
+
+describe "Regar" {
+    
+    method initialize() {
+        game.clear()
+        game.width(3)
+        game.height(2)
+        hector.position(game.at(0,0))
+    }
+
+    test "No hay nada para regar" {
+        assert.throwsException({hector.regar()})
+    }
+
+    test "Riega maiz y crece" {
+        const maiz = new Maiz(position=game.at(0,0))
+        granja.sembrar(maiz)
+        assert.equals(bebe, maiz.estado())
+        hector.regar()
+        assert.equals(adulto, maiz.estado())
+    }
+
+    test "Riega trigo hasta que vuelve a estado 0" {
+        const trigo = new Trigo(position=game.at(0,0))
+        granja.sembrar(trigo)
+        assert.equals(0, trigo.estado())
+        hector.regar()
+        assert.equals(1, trigo.estado())
+        hector.regar()
+        assert.equals(2, trigo.estado())
+        hector.regar()
+        assert.equals(3, trigo.estado())
+        hector.regar()
+        assert.equals(0, trigo.estado())
+    }
+
+    test "Riega tomaco y sube. Planta nuevo tomaco y riega, pero no puede subir" {
+        const tomaco = new Tomaco(position=game.at(0,0))
+        granja.sembrar(tomaco)
+        hector.regar()
+        assert.notThat(granja.hayCultivoEn(game.at(0,0)))
+        assert.equals(tomaco, granja.cultivoEn(game.at(0,1)))
+        granja.sembrar(new Tomaco(position=game.at(0,0)))
+        assert.throwsException({hector.regar()})
+    }
+}

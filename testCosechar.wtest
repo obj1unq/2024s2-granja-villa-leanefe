@@ -1,0 +1,45 @@
+import wollok.game.*
+import hector.*
+import cultivos.*
+import granja.*
+import movimiento.*
+
+describe "Cosechar" {
+
+    method initialize() {
+        game.clear()
+        game.width(3)
+        game.height(3)
+        hector.position(game.at(1,1))
+    }
+
+    test "No hay nada para cosechar" {
+        assert.throwsException({hector.cosechar()})
+    }
+
+    test "La planta no está lista para ser cosechada" {
+        const maiz = new Maiz(position=game.at(1,1))
+        granja.sembrar(maiz)
+        assert.equals(bebe, maiz.estado())
+        assert.throwsException({hector.cosechar()})
+    }
+    
+    test "Se pueden cosechar las plantas, la granja las olvida y Hector las recuerda" {
+        const maiz = new Maiz(position=game.at(1,1))
+        const trigo = new Trigo(position=game.at(2,1))
+        const tomaco = new Tomaco(position=game.at(2,2))
+        const plantas = #{maiz, trigo, tomaco}
+        plantas.forEach({planta => granja.sembrar(planta)})
+        hector.regar()
+        hector.cosechar()
+        hector.mover(derecha)
+        hector.regar()
+        hector.regar()
+        hector.cosechar()
+        hector.mover(arriba)
+        hector.cosechar()
+        assert.equals(plantas, hector.cosechas())
+        assert.equals(#{}, granja.cultivos())
+    }
+
+}

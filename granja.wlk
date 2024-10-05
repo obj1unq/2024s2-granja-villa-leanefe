@@ -1,4 +1,5 @@
 import wollok.game.*
+import hector.*
 
 object granja {
 
@@ -42,4 +43,19 @@ object granja {
             self.error("No tengo nada para regar.")
     }
 
+    method cosechar(granjero) {
+        const position = granjero.position()
+        self.validarCosecha(position)
+        const cultivoACosechar = self.cultivoEn(position)
+        granjero.agregar(cultivoACosechar)
+        game.removeVisual(cultivoACosechar)
+        cultivos.remove(cultivoACosechar)
+    }
+
+    method validarCosecha(position) {
+        if (not self.hayCultivoEn(position))
+            self.error("No tengo nada para cosechar.")
+        else if (not self.cultivoEn(position).estaListoParaCosecha())
+            self.error("La planta no está lista para cosecha.")
+    }
 }

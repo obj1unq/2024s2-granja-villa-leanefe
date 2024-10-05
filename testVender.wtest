@@ -1,0 +1,23 @@
+import wollok.game.*
+import hector.*
+import granja.*
+import cultivos.*
+
+describe "Vender" {
+
+    test "Vendo" {
+        const pos = game.at(0,0)
+        hector.position(pos)
+        hector.agregar(new Tomaco(position=pos))
+        granja.sembrar(new Maiz(position=pos))
+        hector.regar()
+        hector.cosechar()
+        granja.sembrar(new Trigo(position=pos))
+        hector.regar()
+        hector.regar()
+        hector.cosechar()
+        hector.vender()
+        assert.equals(330, hector.oro())
+        assert.equals(#{}, hector.cosechas())
+    }
+}

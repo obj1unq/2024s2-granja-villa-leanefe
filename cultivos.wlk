@@ -4,11 +4,17 @@ import granja.*
 // MAIZ
 class Maiz {
 	const property position
-	var property estado = bebe
+	var estado = bebe
 
 	method image() { return "corn_" + estado.image() + ".png" }
 
+	method estado() { return estado }
+
 	method reaccionarARiego() { estado = adulto }
+
+	method estaListoParaCosecha() { return estado == adulto }
+
+	method precio() { return 150 }
 }
 
 object bebe {
@@ -31,23 +37,11 @@ class Trigo {
 	method reaccionarARiego() {
 		estado = if (estado < 3) estado + 1 else 0
 	}
-}
 
-/*object cero {
-	method image() { return "0" }
-}
+	method estaListoParaCosecha() { return estado >= 2 }
 
-object uno {
-	method image() { return "1" }
+	method precio() { return (estado - 1) * 100 }
 }
-
-object dos {
-	method image() { return "2" }
-}
-
-object tres {
-	method image() { return "3" }
-}*/
 
 // TOMACO
 class Tomaco {
@@ -60,6 +54,11 @@ class Tomaco {
 	method reaccionarARiego() {
 		const siguiente = game.at(position.x(), position.y()+1)
 		granja.validarDentro(siguiente)
+		granja.validarSiembra(siguiente)
 		position = siguiente
 	}
+
+	method estaListoParaCosecha() { return true }
+
+	method precio() { return 80 }
 }
